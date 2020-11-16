@@ -11,7 +11,6 @@ History : 16/11/2020 - v1.0 - Create basic project file.
 """
 import copy
 
-
 __author__ = "Martin Siddons"
 __copyright__ = "Copyright 2020, Martin Siddons"
 __credits__ = ["Martin Siddons"]
@@ -49,7 +48,7 @@ def find_pillars(state):
         if i == last and pillar == 0:  # if the last pillar is off, flip it and the ones either side
             yield [last - 1, last, 0]
             continue
-        elif pillar == 0:   # if a middle pillar is off, flip it and the ones either side
+        elif pillar == 0:  # if a middle pillar is off, flip it and the ones either side
             yield [i - 1, i, i + 1]
 
 
@@ -117,6 +116,37 @@ def iddfs_rec(root):
         limit += 1  # if there are child nodes still to expand, go one level deeper
 
 
+def validate_input(state):
+    try:
+        int(state)
+    except ValueError:
+        print("Please only enter digits.")
+        return None
+
+    root = []
+    for digit in state:
+        if (digit != '0') and (digit != '1'):
+            print("Please enter your puzzle state using only numbers 0 and 1. i.e. 11010")
+            return None
+        root.append(int(digit))
+
+    if len(root) < 4:
+        print("Minimum number of pillars is 5.")
+        return None
+
+    if len(root) % 2 == 0:
+        print("Only puzzles with an odd number of pillars are solvable.")
+        return None
+
+    return root
+
+
+def print_solution(solution):
+    for state in solution:
+        print(state)
+    print()
+
+
 def main():
     """Main function.
 
@@ -125,18 +155,25 @@ def main():
     in front of the character going round clockwise to one before the first one. These states are passed into the IDS
     algorithm to be processed.
     """
-    states_list = [[1, 1, 0, 1, 0], [1, 0, 0, 1, 0]]
+    print("Starting from the pillar in front of you and working clockwise from there, enter a 1 for\n"
+          "pillars that are on and 0 for those that are off. For example \"10001\" if the pillar in front\n"
+          "of you and the pillar to the right of that are on.")
+    while True:
+        state = input("Please enter the current state of your puzzle:")
+        # state = [1, 1, 0, 1, 0]  # for testing, comment out the line above and uncomment this line.
+        # test answer: [1, 1, 0, 1, 0] -> [1, 0, 1, 0, 0] -> [0, 1, 0, 0, 0] -> [0, 0, 1, 1, 0] -> [1, 1, 1, 1, 1]
+        root = validate_input(state)
+        if root is None:
+            continue
+        break
 
-    for i, root in enumerate(states_list):
-        print("Initial State:", root)
-        solution = iddfs_rec(root)
+    print("To get from", root, "to a complete puzzle:")
+    solution = iddfs_rec(root)
 
-        if solution is None:
-            print("No Solution")
-        else:
-            for state in solution:
-                print(state)
-            print()
+    if solution is None:
+        print("No Solution")
+    else:
+        print_solution(solution)
 
 
 main()

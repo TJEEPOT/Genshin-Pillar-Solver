@@ -11,9 +11,9 @@ Since the core was already written, I only had to work out how to solve the puzz
   the end state was easy enough, though.
 
 # Usage Notes #
-This script is written in Python 3, therefore I recommend installing the latest version of Python to run it. Open a
- terminal / command line / Powershell prompt in the folder the script is in and type ```python solver.py``` to run.
-  Follow the prompts to correctly input your pillars: 
+This script is written in Python 3, therefore I recommend installing the latest version of
+ [Python](https://www.python.org/downloads/) to run it. Open a terminal / command line / Powershell prompt in the
+  folder the script is in and type ```python solver.py``` to run. Follow the prompts to correctly input your pillars: 
 1. Start from the pillar in front of you in-game 
 2. Type it's status as either a 0 if it's off, or 1 if it's on
 3. Move clockwise (to the next pillar to the left) and do the same until you're at the pillar before the one you
