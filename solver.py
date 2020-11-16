@@ -82,9 +82,9 @@ def dls_rec(path, limit):
         cutoff = False  # this is true if there are child nodes but we can't reach them at the current depth
         cur_state = copy.deepcopy(path[-1])
 
-        for pillar, nextState in move(cur_state):
-            if nextState not in path:
-                next_path = path + [nextState]  # add the new state to the list of states generated.
+        for pillar, next_state in move(cur_state):
+            if next_state not in path:
+                next_path = path + [next_state]  # add the new state to the list of states generated.
                 returned_path, remaining_moves, pillars = dls_rec(next_path, limit - 1)
 
                 if returned_path is not None:
@@ -144,9 +144,15 @@ def validate_input(state):
 
 
 def print_solution(solution):
-    for pillar in solution:
-        print("Activate pillar", pillar)
-    print()
+    print("\nIf the pillar in front of you is 1 and going clockwise (to the left) is 2, etc, the order\n"
+          "of activation is", solution, " therefore make the following moves:\n")
+    cur_pillar = 1  # the pillar in front of the player
+    for next_pillar in solution:
+        distance = next_pillar - cur_pillar
+        direction = "clockwise (left)" if distance > 0 else "anti-clockwise (right)"
+        plural = "pillar" if abs(distance) == 1 else "pillars"
+        print("Move", direction, abs(distance), plural, "and activate.")
+        cur_pillar = next_pillar
 
 
 def main():
@@ -169,7 +175,6 @@ def main():
             continue
         break
 
-    print("To get from", root, "to a complete puzzle:")
     solution = iddfs_rec(root)
 
     if solution is None:
