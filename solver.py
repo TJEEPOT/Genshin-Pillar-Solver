@@ -62,7 +62,7 @@ def move(state):
         initial_state = copy.deepcopy(state)
         for pillar in pillars:
             state[pillar] = 1 if state[pillar] == 0 else 0  # if this pillar is off, turn it on, otherwise turn it off
-        yield state
+        yield [pillars[1], state]  # send back the pillar activated and the new state
         state = initial_state
 
 
@@ -75,23 +75,25 @@ def dls_rec(path, limit):
     """
     if limit == 0:
         if is_goal(path[-1]):  # pass in the last state in the path
-            return [path, False]
+            return [path, False, []]
         else:
-            return [None, True]  # we didn't find a solution yet but there are child nodes to discover
+            return [None, True, None]  # we didn't find a solution yet but there are child nodes to discover
     else:
         cutoff = False  # this is true if there are child nodes but we can't reach them at the current depth
         cur_state = copy.deepcopy(path[-1])
-        for nextState in move(cur_state):
-            if nextState not in path:
-                next_path = path + [nextState]  # add the new state to the list of states generated.
-                returned_path, remaining_moves = dls_rec(next_path, limit - 1)
+
+        for pillar, next_state in move(cur_state):
+            if next_state not in path:
+                next_path = path + [next_state]  # add the new state to the list of states generated.
+                returned_path, remaining_moves, pillars = dls_rec(next_path, limit - 1)
 
                 if returned_path is not None:
-                    return [returned_path, False]  # unwinding recursion as solution was found
+                    pillars.insert(0, pillar + 1)
+                    return [returned_path, False, pillars]  # unwinding recursion as solution was found
                 if remaining_moves:
                     cutoff = True  # solution not found but there are child nodes, increase limit
 
-        return [None, cutoff]  # we didn't find a solution here, report if there are child nodes left
+        return [None, cutoff, None]  # we didn't find a solution here, report if there are child nodes left
 
 
 def iddfs_rec(root):
@@ -107,10 +109,10 @@ def iddfs_rec(root):
     limit = 0
 
     while True:
-        path, remaining_moves = dls_rec([root], limit)
+        path, remaining_moves, pillars = dls_rec([root], limit)
 
         if path is not None:  # we found the path, send back the moves and calls
-            return path
+            return pillars
         elif not remaining_moves:  # no path exists to the goal
             return None
         limit += 1  # if there are child nodes still to expand, go one level deeper
@@ -142,9 +144,15 @@ def validate_input(state):
 
 
 def print_solution(solution):
-    for state in solution:
-        print(state)
-    print()
+    print("\nIf the pillar in front of you is 1 and going clockwise (to the left) is 2, etc, the order\n"
+          "of activation is", solution, " therefore make the following moves:\n")
+    cur_pillar = 1  # the pillar in front of the player
+    for next_pillar in solution:
+        distance = next_pillar - cur_pillar
+        direction = "clockwise (left)" if distance > 0 else "anti-clockwise (right)"
+        plural = "pillar" if abs(distance) == 1 else "pillars"
+        print("Move", direction, abs(distance), plural, "and activate.")
+        cur_pillar = next_pillar
 
 
 def main():
@@ -167,7 +175,6 @@ def main():
             continue
         break
 
-    print("To get from", root, "to a complete puzzle:")
     solution = iddfs_rec(root)
 
     if solution is None:
