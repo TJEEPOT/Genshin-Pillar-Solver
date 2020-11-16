@@ -116,6 +116,31 @@ def iddfs_rec(root):
         limit += 1  # if there are child nodes still to expand, go one level deeper
 
 
+def validate_input(state):
+    try:
+        int(state)
+    except ValueError:
+        print("Please only enter digits.")
+        return None
+
+    root = []
+    for digit in state:
+        if (digit != '0') and (digit != '1'):
+            print("Please enter your puzzle state using only numbers 0 and 1. i.e. 11010")
+            return None
+        root.append(int(digit))
+
+    if len(root) < 4:
+        print("Minimum number of pillars is 5.")
+        return None
+
+    if len(root) % 2 == 0:
+        print("Only puzzles with an odd number of pillars are solvable.")
+        return None
+
+    return root
+
+
 def print_solution(solution):
     for state in solution:
         print(state)
@@ -131,17 +156,17 @@ def main():
     algorithm to be processed.
     """
     print("Starting from the pillar in front of you and working clockwise from there, enter a 1 for\n"
-          "pillars that are on and 0 for those that are off. For example \"10001\" if the one in front\n"
-          " of you and the one to the right of that are on.")
-    root = []
+          "pillars that are on and 0 for those that are off. For example \"10001\" if the pillar in front\n"
+          "of you and the pillar to the right of that are on.")
     while True:
         state = input("Please enter the current state of your puzzle:")
-        # state = [1, 1, 0, 1, 0]  # for testing, comment out the line above and uncomment this.
+        # state = [1, 1, 0, 1, 0]  # for testing, comment out the line above and uncomment this line.
         # test answer: [1, 1, 0, 1, 0] -> [1, 0, 1, 0, 0] -> [0, 1, 0, 0, 0] -> [0, 0, 1, 1, 0] -> [1, 1, 1, 1, 1]
-
-        for pillar in state:
-            root.append(int(pillar))
+        root = validate_input(state)
+        if root is None:
+            continue
         break
+
     print("To get from", root, "to a complete puzzle:")
     solution = iddfs_rec(root)
 
