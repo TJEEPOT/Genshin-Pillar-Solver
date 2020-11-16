@@ -18,8 +18,9 @@ This script is written in Python 3, therefore I recommend installing the latest 
 2. Type it's status as either a 0 if it's off, or 1 if it's on
 3. Move clockwise (to the next pillar to the left) and do the same until you're at the pillar before the one you
  started at. i.e. for the 5-pillar puzzle in Domain of the Wayward Path: ![Pillar puzzle in Domain of the Wayward Path
- ](https://i.imgur.com/poOhufs.png), starting from the pillar to the right of the player character, we get the code
-  `11010`.
+ ](https://static.gosunoob.com/img/1/2020/10/domain-of-the-wayward-path-genshin-impact-1024x576.jpg), starting from
+  the pillar to the right of the player character and moving clockwise to the back right pillar, we get the code
+   `11010`.
 4. The program will give you back a list of states from where you started from to the goal (11111 for a 5-pillar
  puzzle).
  
