@@ -125,7 +125,7 @@ def main():
     in front of the character going round clockwise to one before the first one. These states are passed into the IDS
     algorithm to be processed.
     """
-    states_list = [[1, 1, 0, 1, 0], [1, 0, 0, 1, 0]]
+    states_list = [[1, 1, 0, 1, 0]]
 
     for i, root in enumerate(states_list):
         print("Initial State:", root)
