@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Solution of the Genshin Impact Pillar Puzzle
+"""Solver for the Genshin Impact Pillar Puzzle
 
 File    : solver.py
 Date    : Monday 16 November 2020
@@ -33,24 +33,24 @@ def is_goal(state):
     return True
 
 
-# def flip_pillars(i):
-#     """Generator to change the position of the blank tile.
-#
-#     The movement of the blank tile is dependant on which tiles surround it.
-#
-#     :param i: The row of the blank tile.
-#     :param j: The column of the blank tile.
-#     :param n: The square root of the puzzle area (i.e. for a 4x4 puzzle, n = 4)
-#     :return:  The row and column of the tile to switch the blank with.
-#     """
-#     if i + 1 < n:   # check for a tile to the bottom
-#         yield (i + 1, j)
-#     if i - 1 >= 0:  # check for a tile to the top
-#         yield (i - 1, j)
-#     if j + 1 < n:   # check for a tile to the right
-#         yield (i, j + 1)
-#     if j - 1 >= 0:  # check for a tile to the left
-#         yield (i, j - 1)
+def find_pillars(state):
+    """Generator to work out which pillars need to be flipped.
+
+    This checks each pillar and if it's off, it yields that pillar and the two either side of it.
+
+    :param state: Current state of the puzzle
+    :return:  The positions of the pillars to be flipped from on to off and vise versa.
+    """
+    last = len(state) - 1
+    for i, pillar in enumerate(state):
+        if i == 0 and pillar == 0:  # if the first pillar is off, flip it and the ones either side
+            yield [last, 0, 1]
+            continue
+        if i == last and pillar == 0:  # if the last pillar is off, flip it and the ones either side
+            yield [last - 1, last, 0]
+            continue
+        elif pillar == 0:   # if a middle pillar is off, flip it and the ones either side
+            yield [i - 1, i, i + 1]
 
 
 def move(state):
@@ -59,9 +59,12 @@ def move(state):
     :param state: Array containing the current status of all pillars in the puzzle
     :return:      The next state of the puzzle, where one pillar has been turned on (and flipped the others).
     """
-    # for pillar in state():
-    #     if pillar == 0:
-    return state
+    for pillars in find_pillars(state):  # function returns a list of pillars to be flipped
+        initial_state = copy.deepcopy(state)
+        for pillar in pillars:
+            state[pillar] = 1 if state[pillar] == 0 else 0  # if this pillar is off, turn it on, otherwise turn it off
+        yield state
+        state = initial_state
 
 
 def dls_rec(path, limit):
@@ -82,10 +85,10 @@ def dls_rec(path, limit):
         for nextState in move(cur_state):
             if nextState not in path:
                 next_path = path + [nextState]  # add the new state to the list of states generated.
-                path, remaining_moves = dls_rec(next_path, limit - 1)
+                returned_path, remaining_moves = dls_rec(next_path, limit - 1)
 
-                if path is not None:
-                    return [path, False]  # unwinding recursion as solution was found
+                if returned_path is not None:
+                    return [returned_path, False]  # unwinding recursion as solution was found
                 if remaining_moves:
                     cutoff = True  # solution not found but there are child nodes, increase limit
 
@@ -105,10 +108,10 @@ def iddfs_rec(root):
     limit = 0
 
     while True:
-        path, remaining_moves = dls_rec(root, limit)
+        path, remaining_moves = dls_rec([root], limit)
 
         if path is not None:  # we found the path, send back the moves and calls
-            return [path]
+            return path
         elif not remaining_moves:  # no path exists to the goal
             return None
         limit += 1  # if there are child nodes still to expand, go one level deeper
@@ -117,8 +120,9 @@ def iddfs_rec(root):
 def main():
     """Main function.
 
-    Gives a test state with the state representation [n1, n2, ..., nx] where n is the status of a pillar where 1 is
-    on and 0 is off, and x is the total number of pillars in the puzzle. These states are then passed into the IDS
+    Gives test states with the state representation [n1, n2, ..., nx] where n is the status of a pillar where 1 is
+    on and 0 is off, and x is the total number of pillars in the puzzle. Numbers are in the order of the first pillar
+    in front of the character going round clockwise to one before the first one. These states are passed into the IDS
     algorithm to be processed.
     """
     states_list = [[1, 1, 0, 1, 0], [1, 0, 0, 1, 0]]
