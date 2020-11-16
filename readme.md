@@ -12,13 +12,13 @@ Since the core was already written, I only had to work out how to solve the puzz
 
 # Usage Notes #
 This script is written in Python 3, therefore I recommend installing the latest version of Python to run it. Open a
- terminal / command line / Powershell prompt in the folder the script is in and type ```python solver``` to run.
+ terminal / command line / Powershell prompt in the folder the script is in and type ```python solver.py``` to run.
   Follow the prompts to correctly input your pillars: 
 1. Start from the pillar in front of you in-game 
 2. Type it's status as either a 0 if it's off, or 1 if it's on
 3. Move clockwise (to the next pillar to the left) and do the same until you're at the pillar before the one you
  started at. i.e. for the 5-pillar puzzle in Domain of the Wayward Path: ![Pillar puzzle in Domain of the Wayward Path
- ](https://static.gosunoob.com/img/1/2020/10/domain-of-the-wayward-path-genshin-impact-1024x576.jpg), starting from
+ ](https://static.gosunoob.com/img/1/2020/10/domain-of-the-wayward-path-genshin-impact-1024x576.jpg) starting from
   the pillar to the right of the player character and moving clockwise to the back right pillar, we get the code
    `11010`.
 4. The program will give you back a list of states from where you started from to the goal (11111 for a 5-pillar
